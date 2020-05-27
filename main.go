@@ -4,10 +4,10 @@ import "fmt"
 
 func main() {
 	fmt.Println(Version())
-	k, err := NewKhaiii("", "")
+	k, err := New("", "")
 	chk(err)
 	defer k.Close()
-	fmt.Printf("%+v", k)
+	k.Analyze("세상 안녕", "")
 }
 
 func chk(err error) {

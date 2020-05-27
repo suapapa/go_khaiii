@@ -6,6 +6,7 @@ import "C"
 
 import (
 	"fmt"
+	"log"
 )
 
 // Version returns version string
@@ -33,4 +34,10 @@ func New(rscDir, opt string) (*Khaiii, error) {
 // Close closes khaiii resource
 func (k *Khaiii) Close() {
 	C.khaiii_close(k.handle)
+}
+
+func (k *Khaiii) Analyze(input, opt string) {
+	words := C.khaiii_analyze(k.handle, C.CString(input), C.CString(opt))
+	log.Printf("%+v", words)
+	log.Println(input[words.begin:words.length])
 }
