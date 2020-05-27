@@ -16,7 +16,6 @@ Install locations:
 * library: `/usr/local/lib/libkhaiii.so*`
 * resources: `/usr/local/share/khaiii/`
 
-
 ## reference
 
 * Python wrapper: `khaiii/src/main/python/khaiii/khaiii.py`

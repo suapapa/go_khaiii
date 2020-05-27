@@ -1,4 +1,4 @@
-package main
+package khaiii
 
 // #cgo LDFLAGS: -lkhaiii
 // #include <khaiii/khaiii_api.h>

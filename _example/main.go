@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/suapapa/go/khaiii"
 )
 
 var (
@@ -11,16 +13,16 @@ var (
 )
 
 func main() {
-	fmt.Println(Version())
-	k, err := New("", "")
+	fmt.Println(khaiii.Version())
+	k, err := khaiii.New("", "")
 	chk(err)
 	defer k.Close()
 
 	var inputStr string
-	if len(os.Args) == 0 {
-		inputStr = exampleStr
-	} else {
+	if len(os.Args) > 1 {
 		inputStr = os.Args[1]
+	} else {
+		inputStr = exampleStr
 	}
 
 	for v := range k.Analyze(inputStr, "") {
