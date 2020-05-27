@@ -39,6 +39,21 @@ func (w *Word) Val() string {
 	return w.origStr[w.cptr.begin : w.cptr.begin+w.cptr.length]
 }
 
+// Morphs return Morph stream for the Word
+func (w *Word) Morphs() chan *Morph {
+	retCh := make(chan *Morph)
+	m := w.cptr.morphs
+	go func() {
+		for m != nil {
+			retCh <- &Morph{cptr: m}
+			m = m.next
+		}
+		close(retCh)
+	}()
+
+	return retCh
+}
+
 // Khaiii represent khaiii engine
 type Khaiii struct {
 	handle    C.int
@@ -72,8 +87,7 @@ func (k *Khaiii) Analyze(input, opt string) chan *Word {
 	}
 	cWord := C.khaiii_analyze(k.handle, C.CString(input), C.CString(opt))
 	k.firstWord = cWord
-	// log.Printf("%+v", words)
-	// log.Println(input[words.begin:words.length])
+
 	retCh := make(chan *Word)
 	go func() {
 		for cWord != nil {

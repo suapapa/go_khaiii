@@ -10,10 +10,12 @@ func main() {
 	k, err := New("", "")
 	chk(err)
 	defer k.Close()
-	ch := k.Analyze("세상 안녕", "")
+	ch := k.Analyze("세상아 안녕", "")
 	for v := range ch {
-		log.Printf("%+v", v)
 		log.Println(v.Val())
+		for m := range v.Morphs() {
+			log.Println(m.Lex(), m.Tag(), m.cptr.begin, m.cptr.length)
+		}
 	}
 }
 
