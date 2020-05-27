@@ -1,13 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 func main() {
 	fmt.Println(Version())
 	k, err := New("", "")
 	chk(err)
 	defer k.Close()
-	k.Analyze("세상 안녕", "")
+	ch := k.Analyze("세상 안녕", "")
+	for v := range ch {
+		log.Printf("%+v", v)
+		log.Println(v.Val())
+	}
 }
 
 func chk(err error) {
