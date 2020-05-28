@@ -1,11 +1,11 @@
 # khaiii: go package (cgo wrapper) of khaiii, Kakao Hangul Analyzer III
 
-## Requirement: build & install kahiii in ubuntu 20.04
+## Requirement: build & install kahiii
 
-After download(clone) kahiii source;
+Download(clone) [kahiii](https://github.com/kakao/khaiii) source, build and install;
 
     $ mkdir build && cd $_
-    $ cmake -E env CXXFLAGS="-w" cmake ..
+    $ cmake -E env CXXFLAGS="-w" cmake .. # I need turn off -Wall in Ubuntu 20.04 (gcc 9.3.0)
     $ make
     $ sudo make install
     $ sudo ld-config
@@ -22,5 +22,4 @@ check out `_example/main.go`
 
 ## reference
 
-* Python wrapper: `khaiii/src/main/python/khaiii/khaiii.py`
 * [21세기 세종계획 말뭉치 구축지침](https://ithub.korean.go.kr/user/total/referenceView.do?boardSeq=5&articleSeq=103&boardGb=T&isInsUpd=&boardType=CORPUS)
