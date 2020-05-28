@@ -5,6 +5,7 @@ package khaiii
 import "C"
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -54,21 +55,50 @@ func (w *Word) Morphs() chan *Morph {
 	return retCh
 }
 
+// Options has options for make new Khaiii instance
+type Options struct {
+	Preanal      bool   `json:"preanal"`  // 기분석사전
+	Errpatch     bool   `json:"errpatch"` // 오분석패치
+	Restore      bool   `json:"restore"`  // 원형복원
+	ResourcePath string `jsong:"-"`       // 리소스경로
+}
+
+var (
+	// DefaultOptions store default options for new khaiii instance
+	DefaultOptions = &Options{
+		Preanal:      true,
+		Errpatch:     true,
+		Restore:      true,
+		ResourcePath: "/usr/local/share/khaiii",
+	}
+)
+
 // Khaiii represent khaiii engine
 type Khaiii struct {
 	handle    C.int
 	firstWord *C.khaiii_word_t
 }
 
-// New opens khaiii resources
-func New(rscDir, opt string) (*Khaiii, error) {
-	if rscDir == "" {
-		rscDir = "/usr/local/share/khaiii"
+// New opens khaiii with default options
+func New() (*Khaiii, error) {
+	return NewWithOptions(nil)
+}
+
+// NewWithOptions opens khaiii with given options
+func NewWithOptions(opt *Options) (*Khaiii, error) {
+	if opt == nil {
+		opt = DefaultOptions
 	}
-	h := C.khaiii_open(C.CString(rscDir), C.CString(opt))
+	rscDir := opt.ResourcePath
+	optJSON, err := json.Marshal(opt)
+	if err != nil {
+		return nil, fmt.Errorf("someing woring while paring options")
+	}
+	h := C.khaiii_open(C.CString(rscDir), C.CString(string(optJSON)))
 	if h < 0 {
 		return nil, fmt.Errorf("fail to open khaiii")
 	}
+
 	return &Khaiii{handle: h}, nil
 }
 

@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	exampleStr = "사랑은 모든것을 덮어주고 모든것을 믿으며 모든것을 바라고 모든것을  견디어냅니다"
+	exampleStr = "사랑은 모든것을 덮어주고 모든것을 믿으며 모든것을 바라고 모든것을 견디어냅니다"
 )
 
 func main() {
 	fmt.Println(khaiii.Version())
-	k, err := khaiii.New("", "")
+	k, err := khaiii.New()
 	chk(err)
 	defer k.Close()
 
