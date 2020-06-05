@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/suapapa/go/khaiii"
+	krpos "github.com/suapapa/go_krpos"
 )
 
 var (
@@ -33,7 +34,10 @@ func main() {
 		log.Println(v.Val())
 		for m := range v.Morphs() {
 			// log.Println(m.Lex(), m.Tag(), m.cptr.begin, m.cptr.length)
-			log.Println("   ", m.Lex(), m.Tag())
+			log.Printf("   %s %s",
+				m.Lex(),               // 형태소
+				krpos.POSMap[m.Tag()], // 품사
+			)
 		}
 	}
 }
