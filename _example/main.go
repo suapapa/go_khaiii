@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/suapapa/go/khaiii"
-	krpos "github.com/suapapa/go_krpos"
+	"github.com/suapapa/go/krpos"
 )
 
 var (
