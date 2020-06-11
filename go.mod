@@ -1,3 +1,3 @@
-module github.com/suapapa/go/khaiii
+module github.com/suapapa/go_khaiii
 
 go 1.14
