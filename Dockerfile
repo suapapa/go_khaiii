@@ -21,8 +21,8 @@ RUN mkdir /usr_local
 RUN cmake -E env CXXFLAGS="-w" cmake -DCMAKE_INSTALL_PREFIX=/usr_local -DCMAKE_BUILD_TYPE=Release  ..
 # CMD ["/bin/bash"]
 RUN make -j$(nproc)
-# RUN make large_resource
-RUN make resource
+RUN make large_resource
+# RUN make resource
 RUN make install
 
 FROM golang:1.24
@@ -30,18 +30,23 @@ FROM golang:1.24
 COPY --from=khaiii-builder /usr_local/ /usr/local/
 RUN ldconfig
 
-COPY examples/analyze /app
 WORKDIR /app
-RUN go mod init example
-# RUN go clean -modcache
-RUN go get github.com/suapapa/go_khaiii@v1.1.1
-RUN go mod tidy
 
-RUN go build 
+COPY main.go .
+COPY pkg ./pkg
+COPY go.mod .
+COPY go.sum .
+
+# RUN go mod init example
+# # RUN go clean -modcache
+# RUN go get github.com/suapapa/go_khaiii@v1.1.1
+# RUN go mod tidy
+
+RUN go build -o app
 
 RUN apt update && apt install -y locales
 RUN locale-gen en_US.UTF-8
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-CMD ["/bin/bash"]
+CMD ["/app/app"]
 

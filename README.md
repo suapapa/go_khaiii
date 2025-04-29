@@ -1,4 +1,4 @@
-# khaiii: go package (cgo wrapper) of khaiii, Kakao Hangul Analyzer III
+# khaiii-server: khaiii API server
 
 ![khaiii_logo](_asset/khaiii_logo_256.webp)
 

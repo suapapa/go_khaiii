@@ -1,4 +1,4 @@
-// Copyright 2020 Homin Lee <homin.lee@suapapa.net>. All rights reserved.
+// Copyright 2020 Homin Lee <ff4500@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -18,18 +18,18 @@ func Version() string {
 	return C.GoString(C.khaiii_version())
 }
 
-// Morph represents morpheme data struct
-type Morph struct {
+// CMorph represents morpheme data struct
+type CMorph struct {
 	cptr *C.khaiii_morph_t
 }
 
 // Lex returns word's lexical
-func (m *Morph) Lex() string {
+func (m *CMorph) Lex() string {
 	return C.GoString(m.cptr.lex)
 }
 
 // Tag returns word's part-of-speech tag
-func (m *Morph) Tag() string {
+func (m *CMorph) Tag() string {
 	return C.GoString(m.cptr.tag)
 }
 
@@ -45,12 +45,12 @@ func (w *Word) Val() string {
 }
 
 // Morphs return Morph stream for the Word
-func (w *Word) Morphs() chan *Morph {
-	retCh := make(chan *Morph)
+func (w *Word) CMorphs() chan *CMorph {
+	retCh := make(chan *CMorph)
 	m := w.cptr.morphs
 	go func() {
 		for m != nil {
-			retCh <- &Morph{cptr: m}
+			retCh <- &CMorph{cptr: m}
 			m = m.next
 		}
 		close(retCh)
@@ -108,17 +108,15 @@ func NewWithOptions(opt *Options) (*Khaiii, error) {
 
 // Close closes khaiii resource
 func (k *Khaiii) Close() {
-	if k.firstWord != nil {
-		k.FreeAnalyzeResult()
-	}
+	k.FreeAnalyzeResult()
+
 	C.khaiii_close(k.handle)
 }
 
-// Analyze analyzes given input and return Word stream
-func (k *Khaiii) Analyze(input, opt string) chan *Word {
-	if k.firstWord != nil {
-		k.FreeAnalyzeResult()
-	}
+// AnalyzeCh analyzes given input and return Word stream
+func (k *Khaiii) AnalyzeCh(input, opt string) chan *Word {
+	k.FreeAnalyzeResult()
+
 	cWord := C.khaiii_analyze(k.handle, C.CString(input), C.CString(opt))
 	k.firstWord = cWord
 
@@ -137,6 +135,61 @@ func (k *Khaiii) Analyze(input, opt string) chan *Word {
 
 // FreeAnalyzeResult free memories of analyzed results
 func (k *Khaiii) FreeAnalyzeResult() {
+	if k.firstWord == nil {
+		return
+	}
+
 	C.khaiii_free_results(k.handle, k.firstWord)
 	k.firstWord = nil
+}
+
+func (k *Khaiii) Analyze(input, opt string) *AnalyzeResult {
+	k.FreeAnalyzeResult()
+
+	cWord := C.khaiii_analyze(k.handle, C.CString(input), C.CString(opt))
+	k.firstWord = cWord
+
+	result := &AnalyzeResult{
+		OrigText: input,
+	}
+
+	for cWord != nil {
+		w := &Word{origStr: input, cptr: cWord}
+		wc := &WordChunk{
+			Word:  w.Val(),
+			Begin: int(w.cptr.begin),
+			Len:   int(w.cptr.length),
+		}
+
+		for m := range w.CMorphs() {
+			wc.Morphs = append(wc.Morphs, Morph{
+				Lex: m.Lex(),
+				Tag: m.Tag(),
+			})
+		}
+
+		result.WordChunks = append(result.WordChunks, wc)
+
+		cWord = cWord.next
+	}
+
+	k.FreeAnalyzeResult()
+	return result
+}
+
+type AnalyzeResult struct {
+	OrigText   string       `json:"orig_text" yaml:"orig_text"`
+	WordChunks []*WordChunk `json:"word_chunks" yaml:"word_chunks"`
+}
+
+type WordChunk struct {
+	Word   string  `json:"word" yaml:"word"`
+	Begin  int     `json:"begin" yaml:"begin"`
+	Len    int     `json:"len" yaml:"len"`
+	Morphs []Morph `json:"morphs" yaml:"morphs"`
+}
+
+type Morph struct {
+	Lex string `json:"lex" yaml:"lex"`
+	Tag string `json:"tag" yaml:"tag"`
 }
