@@ -30,11 +30,11 @@ FROM golang:1.24
 COPY --from=khaiii-builder /usr_local/ /usr/local/
 RUN ldconfig
 
-COPY _example /app
+COPY examples/analyze /app
 WORKDIR /app
 RUN go mod init example
 RUN go get
-RUN go build -o khaiii-go main.go
+RUN go build 
 
 RUN apt update && apt install -y locales
 RUN locale-gen en_US.UTF-8
