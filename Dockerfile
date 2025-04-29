@@ -33,7 +33,7 @@ RUN ldconfig
 COPY examples/analyze /app
 WORKDIR /app
 RUN go mod init example
-RUN go get
+RUN go mod tidy
 RUN go build 
 
 RUN apt update && apt install -y locales
