@@ -33,7 +33,10 @@ RUN ldconfig
 COPY examples/analyze /app
 WORKDIR /app
 RUN go mod init example
+# RUN go clean -modcache
+RUN go get github.com/suapapa/go_khaiii@v1.1.1
 RUN go mod tidy
+
 RUN go build 
 
 RUN apt update && apt install -y locales
