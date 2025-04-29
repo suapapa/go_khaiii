@@ -34,6 +34,7 @@ WORKDIR /app
 
 COPY main.go .
 COPY pkg ./pkg
+COPY docs ./docs
 COPY go.mod .
 COPY go.sum .
 

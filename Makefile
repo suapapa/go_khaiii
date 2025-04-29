@@ -1,4 +1,4 @@
-BUILD_TAG ?= suapapa/khaiii-server:latest
+BUILD_TAG ?= suapapa/khaiii-api:latest
 # BUILD_ARCHS ?= linux/amd64,linux/arm64
 BUILD_ARCHS ?= linux/arm64
 DOCKERFILE ?= Dockerfile

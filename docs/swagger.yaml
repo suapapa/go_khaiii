@@ -1,0 +1,9 @@
+basePath: /v1
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a REST API for Khaiii Korean morphological analyzer.
+  title: Khaiii API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

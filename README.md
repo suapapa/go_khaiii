@@ -1,9 +1,16 @@
-# khaiii-server: khaiii API server
+# khaiii-api: khaiii API server
 
 ![khaiii_logo](_asset/khaiii_logo_256.webp)
 
 ## Build
 
+Update docs:
 ```sh
-docker build -t khaiii:test .
+go install github.com/swaggo/swag/cmd/swag@latest
+swag init
+```
+
+Build container image
+```sh
+make build_image
 ```
