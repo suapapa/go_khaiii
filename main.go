@@ -45,7 +45,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	v1 := router.Group("/v1")
+	v1 := router.Group(root + "/v1")
 
 	// @Summary Ping the server
 	// @Description Check if the server is running
@@ -53,7 +53,7 @@ func main() {
 	// @Produce json
 	// @Success 200 {object} map[string]string
 	// @Router /{root}/ping [get]
-	v1.GET(root+"/ping", func(c *gin.Context) {
+	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
@@ -68,7 +68,7 @@ func main() {
 	// @Success 200 {object} map[string]interface{} "Analysis result"
 	// @Failure 400 {object} map[string]string "Invalid request"
 	// @Router /v1/analyze [post]
-	v1.POST(root+"/analyze", func(c *gin.Context) {
+	v1.POST("/analyze", func(c *gin.Context) {
 		var request reqInput
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(400, gin.H{"error": "Invalid request"})
@@ -79,7 +79,7 @@ func main() {
 		c.JSON(200, gin.H{"data": AnalyzeResult})
 	})
 
-	v1.GET(root+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// add middleware to check secret
 	router.Use(func(c *gin.Context) {

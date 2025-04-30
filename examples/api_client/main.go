@@ -12,7 +12,8 @@ import (
 
 var (
 	text            = "사랑은 모든것을 덮어주고 모든것을 믿으며 모든것을 바라고 모든것을 견디어냅니다"
-	khaiiiAnalyzeEP = "http://localhost:8082/v1/analyze"
+	khaiiiAnalyzeEP = "http://homin.dev/khaiii-api/v1/analyze"
+	// khaiiiAnalyzeEP = "http://localhost:8082/v1/analyze"
 )
 
 func main() {
