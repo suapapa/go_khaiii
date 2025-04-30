@@ -33,6 +33,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("WARN: failed to read secret: %v\n", err)
 	} else {
+		log.Println("using secret from file")
 		secret = strings.TrimSpace(string(secretB))
 	}
 
@@ -48,18 +49,10 @@ func main() {
 	}
 
 	router := gin.Default()
+
 	v1 := router.Group(root + "/v1")
-
-	v1.POST("/analyze", analyzeHandler)
-	v1.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, PingResponse{
-			Message: "pong",
-		})
-	})
-	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	// add middleware to check secret
-	router.Use(func(c *gin.Context) {
+	v1.Use(func(c *gin.Context) {
 		if c.Request.Method == "GET" || secret == "" {
 			c.Next()
 			return
@@ -70,8 +63,18 @@ func main() {
 			c.Abort()
 			return
 		}
+
+		log.Println("authorized")
 		c.Next()
 	})
+
+	v1.POST("/analyze", analyzeHandler)
+	v1.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, PingResponse{
+			Message: "pong",
+		})
+	})
+	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.Run() // listen and serve on 0.0.0.0:8080
 }
