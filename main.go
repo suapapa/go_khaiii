@@ -73,9 +73,6 @@ func main() {
 		c.Next()
 	})
 
-	// set gin mode to release
-	gin.SetMode(gin.ReleaseMode)
-
 	router.Run() // listen and serve on 0.0.0.0:8080
 }
 
