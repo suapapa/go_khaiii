@@ -25,7 +25,7 @@ RUN make large_resource
 # RUN make resource
 RUN make install
 
-FROM golang:1.24
+FROM golang:1.24 AS go-builder
 
 COPY --from=khaiii-builder /usr_local/ /usr/local/
 RUN ldconfig
@@ -34,9 +34,12 @@ WORKDIR /app
 
 COPY main.go .
 COPY pkg ./pkg
-COPY docs ./docs
+# COPY docs ./docs
 COPY go.mod .
 COPY go.sum .
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
 
 # RUN go mod init example
 # # RUN go clean -modcache
@@ -49,5 +52,18 @@ RUN apt update && apt install -y locales
 RUN locale-gen en_US.UTF-8
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-CMD ["/app/app"]
+#CMD ["/app/app"]
 
+FROM ubuntu:24.04
+
+RUN apt update && apt install -y locales
+RUN locale-gen en_US.UTF-8
+RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+COPY --from=khaiii-builder /usr_local/ /usr/local/
+RUN ldconfig
+
+WORKDIR /app
+COPY --from=go-builder /app/app .
+
+CMD ["/app/app"]

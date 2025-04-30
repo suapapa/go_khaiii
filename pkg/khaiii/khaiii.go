@@ -11,6 +11,8 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
+
+	ktype "github.com/suapapa/go_khaiii/pkg/khaiii_type"
 )
 
 // Version returns version string
@@ -143,26 +145,26 @@ func (k *Khaiii) FreeAnalyzeResult() {
 	k.firstWord = nil
 }
 
-func (k *Khaiii) Analyze(input, opt string) *AnalyzeResult {
+func (k *Khaiii) Analyze(input, opt string) *ktype.AnalyzeResult {
 	k.FreeAnalyzeResult()
 
 	cWord := C.khaiii_analyze(k.handle, C.CString(input), C.CString(opt))
 	k.firstWord = cWord
 
-	result := &AnalyzeResult{
+	result := &ktype.AnalyzeResult{
 		OrigText: input,
 	}
 
 	for cWord != nil {
 		w := &Word{origStr: input, cptr: cWord}
-		wc := &WordChunk{
+		wc := &ktype.WordChunk{
 			Word:  w.Val(),
 			Begin: int(w.cptr.begin),
 			Len:   int(w.cptr.length),
 		}
 
 		for m := range w.CMorphs() {
-			wc.Morphs = append(wc.Morphs, Morph{
+			wc.Morphs = append(wc.Morphs, ktype.Morph{
 				Lex: m.Lex(),
 				Tag: m.Tag(),
 			})
@@ -175,21 +177,4 @@ func (k *Khaiii) Analyze(input, opt string) *AnalyzeResult {
 
 	k.FreeAnalyzeResult()
 	return result
-}
-
-type AnalyzeResult struct {
-	OrigText   string       `json:"orig_text" yaml:"orig_text"`
-	WordChunks []*WordChunk `json:"word_chunks" yaml:"word_chunks"`
-}
-
-type WordChunk struct {
-	Word   string  `json:"word" yaml:"word"`
-	Begin  int     `json:"begin" yaml:"begin"`
-	Len    int     `json:"len" yaml:"len"`
-	Morphs []Morph `json:"morphs" yaml:"morphs"`
-}
-
-type Morph struct {
-	Lex string `json:"lex" yaml:"lex"`
-	Tag string `json:"tag" yaml:"tag"`
 }
