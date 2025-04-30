@@ -29,7 +29,7 @@ var k *khaiii.Khaiii
 // @schemes		http
 func main() {
 	var secret string
-	secretB, err := os.ReadFile("/token/secret")
+	secretB, err := os.ReadFile("/secret/token")
 	if err != nil {
 		fmt.Printf("WARN: failed to read secret: %v\n", err)
 	} else {
