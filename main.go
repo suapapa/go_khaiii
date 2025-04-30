@@ -29,7 +29,7 @@ var k *khaiii.Khaiii
 // @schemes		http
 func main() {
 	var secret string
-	secretB, err := os.ReadFile("/token/secret.txt")
+	secretB, err := os.ReadFile("/token/secret")
 	if err != nil {
 		fmt.Printf("WARN: failed to read secret: %v\n", err)
 	} else {
@@ -72,6 +72,9 @@ func main() {
 		}
 		c.Next()
 	})
+
+	// set gin mode to release
+	gin.SetMode(gin.ReleaseMode)
 
 	router.Run() // listen and serve on 0.0.0.0:8080
 }

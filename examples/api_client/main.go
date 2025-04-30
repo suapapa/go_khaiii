@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -14,6 +15,7 @@ var (
 	text            = "사랑은 모든것을 덮어주고 모든것을 믿으며 모든것을 바라고 모든것을 견디어냅니다"
 	khaiiiAnalyzeEP = "http://homin.dev/khaiii-api/v1/analyze"
 	// khaiiiAnalyzeEP = "http://localhost:8082/v1/analyze"
+	secret = cmp.Or(os.Getenv("KHAIII_API_TOKEN"), "")
 )
 
 func main() {
@@ -34,6 +36,9 @@ func main() {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if secret != "" {
+		req.Header.Set("Authorization", "Bearer "+secret)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -42,7 +47,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	var respData khaiiitype.AnalyzeResult
+	type RespData struct {
+		Data khaiiitype.AnalyzeResult `json:"data"`
+	}
+	var respData RespData
 	err = yaml.NewDecoder(resp.Body).Decode(&respData)
 	if err != nil {
 		panic(err)
