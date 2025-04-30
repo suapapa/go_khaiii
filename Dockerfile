@@ -19,7 +19,7 @@ RUN wget https://github.com/kakao/khaiii/archive/refs/tags/v0.4.tar.gz && \
 WORKDIR /src/khaiii-0.4
 RUN mkdir build
 WORKDIR /src/khaiii-0.4/build
-RUN cmake -E env CXXFLAGS="-w" cmake ..
+# RUN cmake -E env CXXFLAGS="-w" cmake ..
 RUN mkdir /usr_local
 RUN cmake -E env CXXFLAGS="-w" cmake -DCMAKE_INSTALL_PREFIX=/usr_local -DCMAKE_BUILD_TYPE=Release  ..
 # CMD ["/bin/bash"]

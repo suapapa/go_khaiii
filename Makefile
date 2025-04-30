@@ -5,7 +5,8 @@ DOCKERFILE ?= Dockerfile
 CONTEXT ?= .
 
 build_image:
-	docker buildx build --no-cache --platform $(BUILD_ARCHS) -t $(IMAGE_TAG) -f $(DOCKERFILE) $(CONTEXT)
+	docker buildx build --platform $(BUILD_ARCHS) -t $(IMAGE_TAG) -f $(DOCKERFILE) $(CONTEXT)
+	# docker buildx build --no-cache --platform $(BUILD_ARCHS) -t $(IMAGE_TAG) -f $(DOCKERFILE) $(CONTEXT)
 
 push_image: build_image
 	docker push $(IMAGE_TAG)
