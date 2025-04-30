@@ -32,9 +32,9 @@ RUN ldconfig
 
 WORKDIR /app
 
-COPY main.go .
+COPY internal ./internal
 COPY pkg ./pkg
-# COPY docs ./docs
+COPY main.go .
 COPY go.mod .
 COPY go.sum .
 

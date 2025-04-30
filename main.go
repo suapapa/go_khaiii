@@ -21,7 +21,7 @@ import (
 // @host localhost:8080
 // @BasePath /v1
 func main() {
-	khaiii, err := khaiii.New()
+	khaiii, err := khaiii.New(nil)
 	if err != nil {
 		log.Fatalf("failed to open khaiii: %v", err)
 	}

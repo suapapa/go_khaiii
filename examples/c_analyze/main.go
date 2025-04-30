@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/suapapa/go_khaiii/pkg/khaiii"
+	"github.com/suapapa/go_khaiii/internal/c_khaiii"
 	"github.com/suapapa/go_khaiii/pkg/krpos"
 )
 
@@ -18,8 +18,8 @@ var (
 )
 
 func main() {
-	fmt.Println(khaiii.Version())
-	k, err := khaiii.New()
+	fmt.Println(c_khaiii.Version())
+	k, err := c_khaiii.New()
 	chk(err)
 	defer k.Close()
 
