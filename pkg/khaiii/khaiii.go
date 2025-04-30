@@ -1,30 +1,16 @@
 package khaiii
 
-import "github.com/suapapa/go_khaiii/internal/c_khaiii"
-
-type AnalyzeResult struct {
-	OrigText   string       `json:"orig_text" yaml:"orig_text"`
-	WordChunks []*WordChunk `json:"word_chunks" yaml:"word_chunks"`
-}
-
-type WordChunk struct {
-	Word   string  `json:"word" yaml:"word"`
-	Begin  int     `json:"begin" yaml:"begin"`
-	Len    int     `json:"len" yaml:"len"`
-	Morphs []Morph `json:"morphs" yaml:"morphs"`
-}
-
-type Morph struct {
-	Lex string `json:"lex" yaml:"lex"`
-	Tag string `json:"tag" yaml:"tag"`
-}
-
-type KhaiiiOptions c_khaiii.Options
+import (
+	"github.com/suapapa/go_khaiii/internal/c_khaiii"
+	"github.com/suapapa/go_khaiii/pkg/khaiiitype"
+)
 
 type Khaiii struct {
 	Version string
 	cKhaiii *c_khaiii.Khaiii
 }
+
+type KhaiiiOptions c_khaiii.Options
 
 func New(options *KhaiiiOptions) (*Khaiii, error) {
 	var opt *c_khaiii.Options
@@ -52,27 +38,27 @@ func (k *Khaiii) Close() {
 	}
 }
 
-func (k *Khaiii) Analyze(input, opt string) *AnalyzeResult {
+func (k *Khaiii) Analyze(input, opt string) *khaiiitype.AnalyzeResult {
 	cWordCh := k.cKhaiii.AnalyzeCh(input, opt)
 	if cWordCh == nil {
 		return nil
 	}
 	defer k.cKhaiii.FreeAnalyzeResult()
 
-	result := &AnalyzeResult{
+	result := &khaiiitype.AnalyzeResult{
 		OrigText: input,
 	}
 
 	for w := range cWordCh {
 		// w := &c_khaiii.Word{OrigStr: input, CWord: cWord}
-		wc := &WordChunk{
+		wc := &khaiiitype.WordChunk{
 			Word:  w.Val(),
 			Begin: w.Begin(),
 			Len:   w.Length(),
 		}
 
 		for m := range w.CMorphs() {
-			wc.Morphs = append(wc.Morphs, Morph{
+			wc.Morphs = append(wc.Morphs, khaiiitype.Morph{
 				Lex: m.Lex(),
 				Tag: m.Tag(),
 			})

@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/goccy/go-yaml"
-	"github.com/suapapa/go_khaiii/pkg/khaiii"
+	"github.com/suapapa/go_khaiii/pkg/khaiiitype"
 )
 
 var (
@@ -41,7 +41,7 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	var respData khaiii.AnalyzeResult
+	var respData khaiiitype.AnalyzeResult
 	err = yaml.NewDecoder(resp.Body).Decode(&respData)
 	if err != nil {
 		panic(err)
