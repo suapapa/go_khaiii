@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"cmp"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -46,6 +47,10 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		panic(fmt.Sprintf("status code: %d", resp.StatusCode))
+	}
 
 	type RespData struct {
 		Data khaiiitype.AnalyzeResult `json:"data"`
