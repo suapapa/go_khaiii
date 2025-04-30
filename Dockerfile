@@ -2,11 +2,14 @@ FROM ubuntu:20.04 AS khaiii-builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     wget \
-    libboost-all-dev
+    libboost-all-dev \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 RUN wget https://github.com/kakao/khaiii/archive/refs/tags/v0.4.tar.gz && \
