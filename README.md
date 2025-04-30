@@ -50,3 +50,6 @@ word_chunks:
     tag: JKO
 # ...
 ```
+
+## Reference
+- [Kakao Hangul Analyzer III](https://github.com/kakao/khaiii) - 형태소 분석기
