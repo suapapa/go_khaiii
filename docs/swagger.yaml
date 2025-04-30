@@ -1,9 +1,58 @@
 basePath: /v1
-host: localhost:8080
+definitions:
+  main.AnalyzeResponse:
+    description: Response for the analyze endpoint
+    properties:
+      data: {}
+    type: object
+  main.ErrorResponse:
+    description: Error response structure
+    properties:
+      error:
+        example: Invalid request
+        type: string
+    type: object
+  main.reqInput:
+    description: Input structure for text analysis
+    properties:
+      text:
+        example: 안녕하세요
+        type: string
+    required:
+    - text
+    type: object
 info:
   contact: {}
-  description: This is a REST API for Khaiii Korean morphological analyzer.
+  description: Input structure for text analysis
   title: Khaiii API
   version: "1.0"
-paths: {}
+paths:
+  /analyze:
+    post:
+      consumes:
+      - application/json
+      description: Perform morphological analysis on Korean text
+      parameters:
+      - description: Text to analyze
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.reqInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.AnalyzeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Analyze text
+      tags:
+      - Analysis
+schemes:
+- http
 swagger: "2.0"

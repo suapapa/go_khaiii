@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// Package main provides the REST API for Khaiii Korean morphological analyzer.
 package main
 
 import (
@@ -12,18 +13,20 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suapapa/go_khaiii/pkg/khaiii"
 
 	_ "github.com/suapapa/go_khaiii/docs"
+	"github.com/suapapa/go_khaiii/pkg/khaiii"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title Khaiii API
-// @version 1.0
-// @description This is a REST API for Khaiii Korean morphological analyzer.
-// @host localhost:8080
-// @BasePath /v1
+var k *khaiii.Khaiii
+
+// @title			Khaiii API
+// @version		1.0
+// @description	This is a REST API for Khaiii Korean morphological analyzer.
+// @BasePath		/v1
+// @schemes		http
 func main() {
 	var secret string
 	secretB, err := os.ReadFile("/token/secret.txt")
@@ -33,11 +36,11 @@ func main() {
 		secret = strings.TrimSpace(string(secretB))
 	}
 
-	khaiii, err := khaiii.New(nil)
+	k, err = khaiii.New(nil)
 	if err != nil {
 		log.Fatalf("failed to open khaiii: %v", err)
 	}
-	defer khaiii.Close()
+	defer k.Close()
 
 	root := cmp.Or(os.Getenv("ROOT_PATH"), "/")
 	if strings.HasSuffix(root, "/") {
@@ -47,38 +50,12 @@ func main() {
 	router := gin.Default()
 	v1 := router.Group(root + "/v1")
 
-	// @Summary Ping the server
-	// @Description Check if the server is running
-	// @Tags Health
-	// @Produce json
-	// @Success 200 {object} map[string]string
-	// @Router /{root}/ping [get]
+	v1.POST("/analyze", analyzeHandler)
 	v1.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
+		c.JSON(200, PingResponse{
+			Message: "pong",
 		})
 	})
-
-	// @Summary Analyze Korean text
-	// @Description Perform morphological analysis on the input text
-	// @Tags Analysis
-	// @Accept json
-	// @Produce json
-	// @Param request body reqInput true "Text to analyze"
-	// @Success 200 {object} map[string]interface{} "Analysis result"
-	// @Failure 400 {object} map[string]string "Invalid request"
-	// @Router /v1/analyze [post]
-	v1.POST("/analyze", func(c *gin.Context) {
-		var request reqInput
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(400, gin.H{"error": "Invalid request"})
-			return
-		}
-
-		AnalyzeResult := khaiii.Analyze(request.Text, "")
-		c.JSON(200, gin.H{"data": AnalyzeResult})
-	})
-
 	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// add middleware to check secret
@@ -99,6 +76,50 @@ func main() {
 	router.Run() // listen and serve on 0.0.0.0:8080
 }
 
+// @Summary		Analyze text
+// @Description	Perform morphological analysis on Korean text
+// @Tags			Analysis
+// @Accept			json
+// @Produce		json
+// @Param			request	body		reqInput	true	"Text to analyze"
+// @Success		200		{object}	AnalyzeResponse
+// @Failure		400		{object}	ErrorResponse
+// @Router			/analyze [post]
+func analyzeHandler(c *gin.Context) {
+	var request reqInput
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(400, ErrorResponse{Error: "Invalid request"})
+		return
+	}
+
+	AnalyzeResult := k.Analyze(request.Text, "")
+	c.JSON(200, AnalyzeResponse{Data: AnalyzeResult})
+}
+
+// PingResponse represents the response for the ping endpoint
+//
+//	@Description	Response for the ping endpoint
+type PingResponse struct {
+	Message string `json:"message" example:"pong"`
+}
+
+// AnalyzeResponse represents the response for the analyze endpoint
+//
+//	@Description	Response for the analyze endpoint
+type AnalyzeResponse struct {
+	Data interface{} `json:"data"`
+}
+
+// ErrorResponse represents an error response
+//
+//	@Description	Error response structure
+type ErrorResponse struct {
+	Error string `json:"error" example:"Invalid request"`
+}
+
+// reqInput represents the input for analysis
+//
+//	@Description	Input structure for text analysis
 type reqInput struct {
-	Text string `json:"text"`
+	Text string `json:"text" binding:"required" example:"안녕하세요"`
 }
