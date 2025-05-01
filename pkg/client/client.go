@@ -26,7 +26,7 @@ func (c *Client) Analyze(input string) ([]*WordChunk, error) {
 	}
 	dataReader := bytes.NewReader(data)
 
-	req, err := http.NewRequest("POST", c.BaseURL, dataReader)
+	req, err := http.NewRequest("POST", c.BaseURL+"/analyze", dataReader)
 	if err != nil {
 		return nil, err
 	}
