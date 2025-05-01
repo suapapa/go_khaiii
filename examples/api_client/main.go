@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/goccy/go-yaml"
-	"github.com/suapapa/go_khaiii/pkg/khaiiitype"
+	"github.com/suapapa/khaiii-api/pkg/khaiiitype"
 )
 
 var (

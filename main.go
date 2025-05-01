@@ -14,8 +14,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/suapapa/go_khaiii/docs"
-	"github.com/suapapa/go_khaiii/pkg/khaiii"
+	_ "github.com/suapapa/khaiii-api/docs"
+	"github.com/suapapa/khaiii-api/pkg/khaiii"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )

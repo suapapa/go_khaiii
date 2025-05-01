@@ -9,8 +9,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/suapapa/go_khaiii/internal/c_khaiii"
-	"github.com/suapapa/go_khaiii/pkg/krpos"
+	"github.com/suapapa/khaiii-api/internal/c_khaiii"
+	"github.com/suapapa/khaiii-api/pkg/krpos"
 )
 
 var (

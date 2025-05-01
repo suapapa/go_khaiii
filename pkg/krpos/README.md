@@ -6,4 +6,4 @@
 
 ## example
 
-checkout [khaiii's example code](https://github.com/suapapa/go_khaiii/blob/master/_example/main.go)
+checkout [khaiii's example code](https://github.com/suapapa/khaiii-api/blob/master/_example/main.go)
