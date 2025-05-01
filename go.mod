@@ -1,4 +1,4 @@
-module github.com/suapapa/go_khaiii
+module github.com/suapapa/khaiii-api
 
 go 1.24
 
