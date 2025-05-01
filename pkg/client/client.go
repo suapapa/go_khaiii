@@ -15,7 +15,9 @@ type Client struct {
 	Client  *http.Client
 }
 
-func (c *Client) Analyze(input string) ([]*khaiiitype.WordChunk, error) {
+type WordChunk khaiiitype.WordChunk
+
+func (c *Client) Analyze(input string) ([]*WordChunk, error) {
 	data, err := json.Marshal(map[string]string{
 		"Text": input,
 	})
@@ -58,5 +60,10 @@ func (c *Client) Analyze(input string) ([]*khaiiitype.WordChunk, error) {
 		return nil, err
 	}
 
-	return respData.Data.WordChunks, nil
+	ret := make([]*WordChunk, 0, len(respData.Data.WordChunks))
+	for _, wc := range respData.Data.WordChunks {
+		ret = append(ret, (*WordChunk)(wc))
+	}
+
+	return ret, nil
 }
